@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>J2SE Mind Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/jointjs@3.4.2/dist/joint.min.css">
+  <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://unpkg.com/backbone@1.4.0/backbone-min.js"></script>
+  <script src="https://unpkg.com/jointjs@3.4.2/dist/joint.min.js"></script>
+</head>
+<body>
+  <div id="diagram"></div>
+
+  <script>
+    const graph = new joint.dia.Graph;
+    const paper = new joint.dia.Paper({
+      el: $('#diagram'),
+      width: 2000,
+      height: 3000,
+      model: graph,
+      gridSize: 10,
+      interactive: { elementMove: false },
+    });
+
+    const nodes = {
+      A: { x: 450, y: 50, label: 'J2SE (Java 2 Standard Edition)' },
+      B: { x: 350, y: 200, label: 'Foundation' },
+      B1: { x: 80, y: 350, label: 'Java Virtual Machine (JVM)' },
+      B2: { x: 300, y: 350, label: 'Java Class Libraries (JCL)' },
+      B3: { x: 515, y: 350, label: 'Platform Independence, Portability' },
+      C: { x: 450, y: 500, label: 'Core Packages' },
+      C1: { x: 50, y: 650, label: 'util (Utility Functions)' },
+      C2: { x: 350, y: 650, label: 'java.lang (Core classes like Object, String)' },
+      C3: { x: 750, y: 650, label: 'io (Input/Output)' },
+      C4: { x: 1300, y: 650, label: 'awt (Abstract Window Toolkit)' },
+      C5: { x: 900, y: 650, label: 'applet (Applet API)' },
+      C6: { x: 1050, y: 650, label: 'Networking, Security, Threading' },
+      D: { x: 750, y: 800, label: 'Advanced Packages' },
+      D1: { x: 290, y: 950, label: 'javax.swing (Swing GUI components)' },
+      D2: { x: 750, y: 950, label: 'javax.servlet (Web development APIs)' },
+      D3: { x: 0, y: 950, label: 'javax.sql (JDBC: Database access)' },
+      D4: { x: 1050, y: 950, label: 'javax.rmi (Remote Method Invocation)' },
+      D5: { x: 1330, y: 950, label: 'JNDI (Java Naming and Directory Interface)' },
+      D6: { x: 1750, y: 950, label: 'More (XML, Security, Networking)' },
+      E: { x: 450, y: 1100, label: 'Tools and Concepts' },
+      E1: { x: 350, y: 1250, label: 'JDK (Java Development Kit)' },
+      E2: { x: 0, y: 1250, label: 'IDE (Integrated Development Environment)' },
+      E3: { x: 1200, y: 1250, label: 'Applet' },
+      E4: { x: 750, y: 1250, label: 'JAR (Java Archive)' },
+      E5: { x: 900, y: 1250, label: 'Exceptions, Garbage Collection, Multithreading' },
+      F: { x: 450, y: 1400, label: 'Applications' },
+      F1: { x: 300, y: 1550, label: 'Desktop Applications' },
+      F2: { x: 480, y: 1550, label: 'Web Applications (Servlets, JSPs)' },
+      F3: { x: 750, y: 1550, label: 'Enterprise Applications (EJBs)' },
+      F4: { x: 1050, y: 1550, label: 'Embedded Systems, Mobile Apps' },
+    };
+
+    const links = [
+      { source: 'A', target: 'B' },
+      { source: 'B', target: 'B1' },
+      { source: 'B', target: 'B2' },
+      { source: 'B', target: 'B3' },
+      { source: 'C', target: 'C1' },
+      { source: 'C', target: 'C2' },
+      { source: 'C', target: 'C3' },
+      { source: 'C', target: 'C4' },
+      { source: 'C', target: 'C5' },
+      { source: 'C', target: 'C6' },
+      { source: 'D', target: 'D1' },
+      { source: 'D', target: 'D2' },
+      { source: 'D', target: 'D3' },
+      { source: 'D', target: 'D4' },
+      { source: 'D', target: 'D5' },
+      { source: 'D', target: 'D6' },
+      { source: 'E', target: 'E1' },
+      { source: 'E', target: 'E2' },
+      { source: 'E', target: 'E3' },
+      { source: 'E', target: 'E4' },
+      { source: 'E', target: 'E5' },
+      { source: 'F', target: 'F1' },
+      { source: 'F', target: 'F2' },
+      { source: 'F', target: 'F3' },
+      { source: 'F', target: 'F4' },
+    ];
+
+    _.forEach(nodes, (node, key) => {
+      const textLength = node.label.length * 8; // Adjust the multiplier for suitable sizing
+      const rect = new joint.shapes.standard.Rectangle({
+        position: { x: node.x, y: node.y },
+        size: { width: textLength, height: 60 },
+        attrs: {
+          rect: { fill: '#61BE94', rx: 50, ry: 50, stroke: '#ffffff', 'stroke-width': 2 },
+          text: { text: node.label, fill: '#ffffff', 'font-size': 12 }
+        },
+      });
+      rect.addTo(graph);
+      nodes[key].element = rect;
+    });
+
+    _.forEach(links, link => {
+      const sourceElement = nodes[link.source].element;
+      const targetElement = nodes[link.target].element;
+      const edge = new joint.shapes.standard.Link({
+        source: { id: sourceElement.id, port: 'east' },
+        target: { id: targetElement.id, port: 'west' },
+        router: { name: 'manhattan' },
+        connector: { name: 'smooth' },
+        attrs: { line: { stroke: '#333333', 'stroke-width': 2 } },
+      });
+      edge.addTo(graph);
+    });
+  </script>
+</body>
+</html>
